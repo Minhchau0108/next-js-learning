@@ -1,34 +1,69 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## File-based Routing
 
-## Getting Started
+### Navigation with Link
 
-First, run the development server:
+```
+import Link from 'next/link';
 
-```bash
-npm run dev
-# or
-yarn dev
+function HomePage() {
+  return (
+    <div>
+      <h1>The Home Page</h1>
+      <ul>
+          <li>
+              <Link href="/portfolio">Portfolio</Link>
+          </li>
+          <li>
+              <Link href="/clients">Clients</Link>
+          </li>
+      </ul>
+    </div>
+  );
+}
+
+export default HomePage;
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Programatic Navigation
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+```
+import { useRouter } from "next/router";
+export default function ClientProjectsPage() {
+  const router = useRouter();
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+  const loadProjectHandler = () => {
+    // load data
+    router.push({
+      pathname: "/clients/[id]/[clientprojectid]",
+      query: { id: "max", clientprojectid: "projecta" },
+    });
+  };
+  return (
+    <div>
+      <h1>The Projects of a given client</h1>
+      <button onClick={loadProjectHandler}>Load Project A</button>
+    </div>
+  );
+}
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```
 
-## Learn More
+### Catch all routes
 
-To learn more about Next.js, take a look at the following resources:
+File folder name `[...slug].js`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+import { useRouter } from "next/router";
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+function BlogPostsPage() {
+  const router = useRouter();
+  console.log(router.query); // Array
+  return (
+    <div>
+      <h1>The Blog Posts</h1>
+    </div>
+  );
+}
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+export default BlogPostsPage;
+```
