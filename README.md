@@ -4,65 +4,34 @@
 
 ### File-based
 
-| Option          | Description                                |
-| --------------- | ------------------------------------------ |
-| /               | Starting Page                              |
-| /events         | Events Page (show all event)               |
-| /events/[id]    | Event Detail Page (show selected Event)    |
-| /events/...slug | Filtered Event Page (show filtered events) |
+| Option          | Description                                | Rendering |
+| --------------- | ------------------------------------------ | --------- |
+| /               | Starting Page                              | Static    |
+| /events         | Events Page (show all event)               | Static    |
+| /events/[id]    | Event Detail Page (show selected Event)    | Static    |
+| /events/...slug | Filtered Event Page (show filtered events) | Client    |
 
 ---
 
-### Navigate Page Progammactically
+### When should use `getStaticProps`?
 
-1. Push to URL
+---
 
-```
-import { useRouter } from "next/router";
-export default function AllEventsPage() {
-  const router = useRouter();
-  const findEventsHandler = (year, month) => {
-    router.push(`/events/${year}/${month}`);
-  };
-  //....
-}
+- The data required to render the page is available at build time ahead of a user’s request.
+- The data comes from a headless CMS.
+- The data can be publicly cached (not user-specific).
+- The page must be pre-rendered (for SEO) and be very fast — getStaticProps generates HTML and JSON files, both of which can be cached by a CDN for performance.
 
+### When should use `getStaticPath`?
 
-```
+---
 
-2. Get from URL
+You should use `getStaticPaths` if you’re statically pre-rendering pages that use dynamic routes.
 
-```
-import { useRouter } from "next/router";
+### When should use `getServerProps`?
 
-export default function FilteredEventsPage() {
-  const router = useRouter();
-  const filterData = router.query.slug;
+---
 
-  if (!filterData) {
-    return <p>Loading...</p>;
-  }
-  const numYear = +filterData[0];
-  const numMonth = +filterData[1];
-  const events = getFilteredEvents({
-    year: numYear,
-    month: numMonth,
-  });
+You should use getServerSideProps only if you need to pre-render a page whose data must be fetched at request time. Time to first byte (TTFB) will be slower than `getStaticProps` because the server must compute the result on every request, and the result cannot be cached by a CDN without extra configuration.
 
-  if (!events || events.length === 0) {
-    return (
-      <>
-        <ErrorAlert>
-          <p>No event found!</p>
-        </ErrorAlert>
-      </>
-    );
-  }
-  return (
-    <>
-      <EventList items={events} />
-    </>
-  );
-}
-
-```
+!!!!! If you don’t need to pre-render the data, then you should consider fetching data on the client side
