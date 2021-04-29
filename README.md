@@ -20,7 +20,6 @@
 ```
 import { useRouter } from "next/router";
 export default function AllEventsPage() {
-  const allEvents = getAllEvents();
   const router = useRouter();
   const findEventsHandler = (year, month) => {
     router.push(`/events/${year}/${month}`);
