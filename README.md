@@ -50,6 +50,87 @@ export async function getStaticProps() {
 export default Blog
 ```
 
+```
+export async function getStaticProps(context) {
+  const { params } = context;
+  return {
+    props: {}, // will be passed to the page component as props
+  }
+}
+```
+
+`context` : is parameter
+
+- `params` contains the route parameters for pages using dynamic routes. For example, if the page name is [id].js , then params will look like { id: ... }.
+
+`getStaticProps` should return an object with:
+
+- `props` - A **_required_** object with the props that will be received by the page component.
+- `revalidate` - An **_optional_** amount in seconds after which a page re-generation can occur.
+
+```
+function Blog({ posts }) {
+  return (
+    <ul>
+      {posts.map((post) => (
+        <li>{post.title}</li>
+      ))}
+    </ul>
+  )
+}
+
+// This function gets called at build time on server-side.
+// It may be called again, on a serverless function, if
+// revalidation is enabled and a new request comes in
+export async function getStaticProps() {
+  const res = await fetch('https://.../posts')
+  const posts = await res.json()
+
+  return {
+    props: {
+      posts,
+    },
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every second
+    revalidate: 1, // In seconds
+  }
+}
+```
+
+- `notFound` - An optional boolean value to allow the page to return a 404 status and page.
+
+```
+export async function getStaticProps(context) {
+  const res = await fetch(`https://.../data`)
+  const data = await res.json()
+
+  if (!data) {
+    return {
+      notFound: true,
+    }
+  }
+
+  return {
+    props: { data }, // will be passed to the page component as props
+  }
+}
+```
+
+- `redirect` - An optional redirect value to allow redirecting to internal and external resources.
+
+```
+
+ if (!data) {
+   return {
+     redirect: {
+       destination: '/',
+       permanent: false,
+     },
+   }
+ }
+```
+
 Scenario 2: use `getStaticProps` and `getStaticPath`
 
 Next.js allows you to create pages with dynamic routes. For example, you can create a file called `pages/posts/[id].js` to show a single blog post based on id. This will allow you to show a blog post with `id: 1` when you access `posts/1`.
