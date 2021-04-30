@@ -35,3 +35,52 @@ You should use `getStaticPaths` if you’re statically pre-rendering pages that 
 You should use getServerSideProps only if you need to pre-render a page whose data must be fetched at request time. Time to first byte (TTFB) will be slower than `getStaticProps` because the server must compute the result on every request, and the result cannot be cached by a CDN without extra configuration.
 
 !!!!! If you don’t need to pre-render the data, then you should consider fetching data on the client side
+
+## Head
+
+---
+
+```
+import Head from 'next/head'
+
+function IndexPage() {
+  return (
+    <div>
+      <Head>
+        <title>My page title</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
+      <p>Hello world!</p>
+    </div>
+  )
+}
+
+export default IndexPage
+
+```
+
+## Image
+
+---
+
+```
+import Image from 'next/image'
+
+function Home() {
+  return (
+    <>
+      <h1>My Homepage</h1>
+      <Image
+        src="/me.png"
+        alt="Picture of the author"
+        width={500}
+        height={500}
+      />
+      <p>Welcome to my homepage!</p>
+    </>
+  )
+}
+
+export default Home
+
+```

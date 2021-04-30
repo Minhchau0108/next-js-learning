@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { useState, useEffect } from "react";
 import EventList from "../components/events/event-list";
 import { transformData } from "../helper/utils";
@@ -21,7 +22,18 @@ export default function HomePage(props) {
     return <div>No events</div>;
   }
 
-  return <div>{<EventList items={events} />}</div>;
+  return (
+    <div>
+      <Head>
+        <title>HomeMed Events</title>
+        <meta
+          name='description'
+          content='Find a lot of great events that allow you access health knowledge'
+        />
+      </Head>
+      <EventList items={events} />
+    </div>
+  );
 }
 
 export async function getStaticProps() {
